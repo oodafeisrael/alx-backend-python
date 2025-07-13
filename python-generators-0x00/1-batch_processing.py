@@ -30,8 +30,10 @@ def stream_users_in_batches(batch_size):
 
 def batch_processing(batch_size):
     """Processes each batch and prints users with age > 25"""
-    for batch in stream_users_in_batches(batch_size):   # 1st loop
-        filtered = (user for user in batch if user["age"] > 25)  # generator expression (no extra loop)
-        for user in filtered:  # 2nd loop
-            print(user)
+    def generator():
+        for batch in stream_users_in_batches(batch_size):   # 1st loop
+            for user in batch:  # 2nd loop
+                if user["age"] > 25:
+                    yield user
 
+    return generator() 
