@@ -37,14 +37,33 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
         """Test the _public_repos_url property"""
-        # Define mock return value
+        """Define mock return value"""
         mock_org.return_value = {'repos_url': 'https://api.github.com/orgs/testorg/repos'}
 
-        # Create an instance of the client
+        """Create an instance of the client"""
         client = GithubOrgClient('testorg')
 
-        # Assert that _public_repos_url returns the expected value
+        """Assert that _public_repos_url returns the expected value"""
         self.assertEqual(client._public_repos_url, 'https://api.github.com/orgs/testorg/repos')
+
+
+class TestGithubOrgClient(unittest.TestCase):
+    """Test case for the GithubOrgClient"""
+
+    @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
+    def test_public_repos_url(self, mock_org):
+        """Unit test for GithubOrgClient._public_repos_url"""
+        """Arrange: mock the 'org' property to return a known payload"""
+        mock_org.return_value = {
+            'repos_url': 'https://api.github.com/orgs/testorg/repos'
+        }
+
+        """ Act: create client instance and access _public_repos_url"""
+        client = GithubOrgClient('testorg')
+        result = client._public_repos_url
+
+        """ Assert: _public_repos_url returns the mocked repos_url"""
+        self.assertEqual(result, 'https://api.github.com/orgs/testorg/repos')
 
 
 if __name__ == "__main__":
