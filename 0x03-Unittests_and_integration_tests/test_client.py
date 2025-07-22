@@ -28,8 +28,10 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient(org_name)
         result = client.org
 
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        mock_get_json.assert_called_once_with(
+                f"https://api.github.com/orgs/{org_name}")
         self.assertEqual(result, expected_result)
+
 
 class TestGithubOrgClient(unittest.TestCase):
     """Test case for GithubOrgClient"""
@@ -38,32 +40,40 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos_url(self, mock_org):
         """Test the _public_repos_url property"""
         """Define mock return value"""
-        mock_org.return_value = {'repos_url': 'https://api.github.com/orgs/testorg/repos'}
+        mock_org.return_value = {
+                'repos_url': 'https://api.github.com/orgs/testorg/repos'}
 
         """Create an instance of the client"""
         client = GithubOrgClient('testorg')
 
+        """
+        Assert that _public_repos_url returns the
+        expected value
+        """
         """Assert that _public_repos_url returns the expected value"""
-        self.assertEqual(client._public_repos_url, 'https://api.github.com/orgs/testorg/repos')
+        expected_url = 'https://api.github.com/orgs/testorg/repos'
+        self.assertEqual(
+                client._public_repos_url, expected_url)
 
 
 class TestGithubOrgClient(unittest.TestCase):
     """Test case for the GithubOrgClient"""
 
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
-    def test_public_repos_url(self, mock_org):
+    def test_public_repos(self, mock_org):
         """Unit test for GithubOrgClient._public_repos_url"""
-        """Arrange: mock the 'org' property to return a known payload"""
+        """Arrange"""
         mock_org.return_value = {
             'repos_url': 'https://api.github.com/orgs/testorg/repos'
         }
 
-        """ Act: create client instance and access _public_repos_url"""
+        """Act"""
         client = GithubOrgClient('testorg')
         result = client._public_repos_url
 
-        """ Assert: _public_repos_url returns the mocked repos_url"""
-        self.assertEqual(result, 'https://api.github.com/orgs/testorg/repos')
+        """Assert"""
+        self.assertEqual(
+                result, 'https://api.github.com/orgs/testorg/repos')
 
 
 if __name__ == "__main__":
