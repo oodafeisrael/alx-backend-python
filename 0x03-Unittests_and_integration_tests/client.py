@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """A github org client
 """
+import requests
 from typing import (
     List,
     Dict,

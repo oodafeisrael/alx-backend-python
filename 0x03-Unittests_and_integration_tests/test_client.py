@@ -127,7 +127,10 @@ class TestIntegrationGithubOrgClient(TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up mock for requests.get"""
-        cls.get_patcher = patch("requests.get")
+        # cls.get_patcher = patch("test_client.requests.get")
+        cls.get_patcher = patch(
+                "client.requests.get", autospec=True)
+
 
         # Start patcher and store mock object
         cls.mock_get = cls.get_patcher.start()
