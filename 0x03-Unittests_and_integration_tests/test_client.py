@@ -4,13 +4,14 @@ Unit tests for the GithubOrgClient class.
 """
 
 import unittest
+import fixtures
 from unittest import TestCase
 from unittest.mock import patch, PropertyMock, Mock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 
-#payload = TEST_PAYLOAD[0]
+# payload = TEST_PAYLOAD[0]
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -113,6 +114,7 @@ class TestGithubOrgClient(unittest.TestCase):
                 GithubOrgClient.has_license(
                     repo, license_key), expected)
 
+
 @parameterized_class([
     {
         "org_payload": TEST_PAYLOAD[0][0],
@@ -129,23 +131,26 @@ class TestIntegrationGithubOrgClient(TestCase):
         """Set up mock for requests.get"""
         # cls.get_patcher = patch("test_client.requests.get")
         cls.get_patcher = patch(
-                "client.requests.get", autospec=True)
-
+                "client.requests.get")
 
         # Start patcher and store mock object
         cls.mock_get = cls.get_patcher.start()
 
         # Side effect to simulate .json() based on URL
         def side_effect(url):
-            mock_resp = Mock()
-            if url == f"https://api.github.com/orgs/google":
-                mock_resp.json.return_value = cls.org_payload
-            elif url == cls.org_payload.get("repos_url"):
-                mock_resp.json.return_value = cls.repos_payload
-            else:
-                mock_resp.json.return_value = None
-            return mock_resp
-
+            if url.endswith('/orgs/google'):
+                # return Mock(json=lambda: fixtures.org_payload)
+                # return Mock(json=lambda: self.org_payload)
+                return Mock(
+                        json=lambda: TestIntegrationGithubOrgClient_0.org_payload)
+            elif url.endswith('/orgs/google/repos'):
+                # return Mock(json=lambda: fixtures.repos_payload)
+                # return Mock(json=lambda: self.repos_payload)
+                return Mock(
+                        json=lambda: TestIntegrationGithubOrgClient_0.repos_payload)
+            return None
+        
+        cls.mock_get = cls.get_patcher.start()
         cls.mock_get.side_effect = side_effect
 
     @classmethod
