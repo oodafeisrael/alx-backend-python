@@ -130,27 +130,13 @@ class TestIntegrationGithubOrgClient(TestCase):
     def setUpClass(cls):
         """Set up mock for requests.get"""
         cls.get_patcher = patch('requests.get')
-        # cls.get_patcher = patch(
-        #        "client.requests.get")
-        # Start patcher and store mock object
         cls.mock_get = cls.get_patcher.start()
 
         # Side effect to simulate .json() based on URL
         cls.mock_get.side_effect = [
             Mock(json=lambda: cls.org_payload),
             Mock(json=lambda: cls.repos_payload),
-        ]
-        #def side_effect(url):
-        #    if url.endswith('/orgs/google'):
-        #        return Mock(
-        #                json=lambda: TestIntegrationGithubOrgClient_0.org_payload)
-        #    elif url.endswith('/orgs/google/repos'):
-        #        return Mock(
-        #                json=lambda: TestIntegrationGithubOrgClient_0.repos_payload)
-        #    return None
-        
-        # cls.mock_get = cls.get_patcher.start()
-        # cls.mock_get.side_effect = side_effect
+        ] 
 
     @classmethod
     def tearDownClass(cls):
