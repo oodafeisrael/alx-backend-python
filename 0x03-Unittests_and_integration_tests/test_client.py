@@ -129,45 +129,54 @@ class TestIntegrationGithubOrgClient(TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up mock for requests.get"""
-        # cls.get_patcher = patch("test_client.requests.get")
-        cls.get_patcher = patch(
-                "client.requests.get")
-
+        cls.get_patcher = patch('requests.get')
+        # cls.get_patcher = patch(
+        #        "client.requests.get")
         # Start patcher and store mock object
         cls.mock_get = cls.get_patcher.start()
 
         # Side effect to simulate .json() based on URL
-        def side_effect(url):
-            if url.endswith('/orgs/google'):
-                # return Mock(json=lambda: fixtures.org_payload)
-                # return Mock(json=lambda: self.org_payload)
-                return Mock(
-                        json=lambda: TestIntegrationGithubOrgClient_0.org_payload)
-            elif url.endswith('/orgs/google/repos'):
-                # return Mock(json=lambda: fixtures.repos_payload)
-                # return Mock(json=lambda: self.repos_payload)
-                return Mock(
-                        json=lambda: TestIntegrationGithubOrgClient_0.repos_payload)
-            return None
+        cls.mock_get.side_effect = [
+            Mock(json=lambda: cls.org_payload),
+            Mock(json=lambda: cls.repos_payload),
+        ]
+        #def side_effect(url):
+        #    if url.endswith('/orgs/google'):
+        #        return Mock(
+        #                json=lambda: TestIntegrationGithubOrgClient_0.org_payload)
+        #    elif url.endswith('/orgs/google/repos'):
+        #        return Mock(
+        #                json=lambda: TestIntegrationGithubOrgClient_0.repos_payload)
+        #    return None
         
-        cls.mock_get = cls.get_patcher.start()
-        cls.mock_get.side_effect = side_effect
+        # cls.mock_get = cls.get_patcher.start()
+        # cls.mock_get.side_effect = side_effect
 
     @classmethod
     def tearDownClass(cls):
         """Stop patcher after all tests"""
         cls.get_patcher.stop()
+    
+    def setUp(self):
+        """Set up new mocks for each test"""
+        self.mock_get.reset_mock()
+        self.mock_get.side_effect = [
+            Mock(json=lambda: self.org_payload),
+            Mock(json=lambda: self.repos_payload),
+        ]
 
     def test_public_repos(self):
         """Test public_repos method output"""
-        client_obj = GithubOrgClient("google")
-        self.assertEqual(client_obj.public_repos(), self.expected_repos)
+        client = GithubOrgClient("google")
+        # client_obj = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), self.expected_repos)
 
     def test_public_repos_with_license(self):
         """Test filtering repos by license key"""
-        client_obj = GithubOrgClient("google")
+        client = GithubOrgClient("google")
+        # client_obj = GithubOrgClient("google")
         self.assertEqual(
-            client_obj.public_repos(license="apache-2.0"),
+            client.public_repos(license="apache-2.0"),
             self.apache2_repos
         )
 
