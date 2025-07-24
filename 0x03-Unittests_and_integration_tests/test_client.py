@@ -121,7 +121,8 @@ class TestGithubOrgClient(unittest.TestCase):
         "apache2_repos": [
             repo["name"]
             for repo in TEST_PAYLOAD[0][1]
-            if repo.get("license") and repo["license"].get("key") == "apache-2.0"
+            if repo.get("license")
+            and repo["license"].get("key") == "apache-2.0"
         ]
     }
 ])
@@ -158,7 +159,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     def test_public_repos_with_license(self):
         """
-        Test that public_repos returns only repos with 
+        Test that public_repos returns only repos with
         apac  he-2.0 license
         """
         client = GithubOrgClient("google")
@@ -166,7 +167,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             client.public_repos(license="apache-2.0"),
             self.apache2_repos
         )
-
 
     def test_public_repos(self):
         """Test that public_repos returns expected repo names"""
@@ -179,7 +179,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("google")
         self.assertEqual(
                 client.public_repos(
-                    license="apache-2.0"), self.apache2_repos) 
+                    license="apache-2.0"), self.apache2_repos)
 
 
 if __name__ == "__main__":
