@@ -1,48 +1,60 @@
 from django.db import models
 import uuid
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
 
-# Custom User Model
-class User(AbstractUser):
-    ROLE_CHOICES = [
-        ('guest', 'Guest'),
-        ('host', 'Host'),
-        ('admin', 'Admin'),
-    ]
+# Custom User Manager
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)  # password hashing
+        user.save(using=self._db)
+        return user
 
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
+
+# Custom User Model
+class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)  # Explicitly included
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
-    created_at = models.DateTimeField(default=timezone.now)
+    role = models.CharField(
+        max_length=10,
+        choices=[('guest', 'Guest'), ('host', 'Host'), ('admin', 'Admin')],
+        default='guest'
+    )
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'role']
-    USERNAME_FIELD = 'username'  # Or 'email' if using email as login
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
-    class Meta:
-        indexes = [models.Index(fields=['email'])]
+    objects = CustomUserManager()
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return self.email
 
-# Conversation Model
+# Conversation model
 class Conversation(models.Model):
     conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    participants = models.ManyToManyField(User, related_name='conversations')
-    created_at = models.DateTimeField(default=timezone.now)
+    participants = models.ManyToManyField('User', related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Conversation {self.conversation_id}"
-
-# Message Model
+# Message model
 class Message(models.Model):
     message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey('User', on_delete=models.CASCADE)
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     message_body = models.TextField()
-    sent_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"Message from {self.sender.username} at {self.sent_at}"
+    sent_at = models.DateTimeField(auto_now_add=True)
 
