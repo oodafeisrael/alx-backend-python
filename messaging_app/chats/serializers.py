@@ -60,8 +60,3 @@ class ConversationSerializer(serializers.ModelSerializer):
     def get_messages(self, obj):
         messages = obj.message_set.all().order_by('sent_at')
         return MessageSerializer(messages, many=True).data
-
-
-
-
-
