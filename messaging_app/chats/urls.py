@@ -11,7 +11,7 @@ from .views import ConversationViewSet, MessageViewSet
 router = routers.DefaultRouter()
 
 # Create a DefaultRouter instance
-router = DefaultRouter()
+# router = DefaultRouter()
 
 # Register the viewsets with appropriate route names
 router.register(r'conversations', ConversationViewSet, basename='conversation')
