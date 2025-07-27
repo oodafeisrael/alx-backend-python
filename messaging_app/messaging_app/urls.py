@@ -46,7 +46,12 @@ router.register(r'messages', MessageViewSet, basename='message')
 urlpatterns = [
     path('admin/', admin.site.urls),
     # chats API under /api/ 
-    path('api/', include('chats.urls')),
+    # path('api/', include('chats.urls')),
+    path('api/', include(router.urls)),
+    path('api/', include(convo_router.urls)),
+    # DRF Browsable API login/logout
+    path('api-auth/', include('rest_framework.urls')),
+
     # Swagger UI
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # ReDoc UI
