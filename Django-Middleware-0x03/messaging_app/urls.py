@@ -19,6 +19,7 @@ from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from chats.views import ConversationViewSet, MessageViewSet
 from chats.urls import router as chats_router, convo_router
+from django.http import HttpResponseRedirect
 
 # Swagger/OpenAPI
 from drf_yasg.views import get_schema_view
@@ -47,9 +48,9 @@ router.register(r'messages', MessageViewSet, basename='message')
 urlpatterns = [
     path('admin/', admin.site.urls),
     # chats API under /api/ 
-    # path('api/', include('chats.urls')),
-    path('api/', include(router.urls)),
-    path('api/', include(convo_router.urls)),
+    path('api/', include('chats.urls')),
+    # path('api/', include(router.urls)),
+    # path('api/', include(convo_router.urls)),
     # DRF Browsable API login/logout
     path('api-auth/', include('rest_framework.urls')),
 
@@ -59,4 +60,6 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     # Swagger JSON and YAML
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    # Redirect base URL to Swagger
+    path('', lambda request: HttpResponseRedirect('/swagger/')),
 ]
