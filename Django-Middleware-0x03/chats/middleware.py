@@ -50,10 +50,10 @@ class RequestLoggingMiddleware:
         Returns:
             HttpResponse: The response from the view or next middleware.
         """
-        user = request.user if request.user.is_authenticated else 'Anonymous'
-        log_message = f"{datetime.now()} - User: {user} - Path: {request.path}"
-        logger.info(log_message)
+        user = request.user if request.user.is_authenticated else "Anonymous"
+        # Log request info
+        logging.info(f"{datetime.now()} - User: {user} - Path: {request.path}")
 
+        # Continue processing
         response = self.get_response(request)
         return response
-
