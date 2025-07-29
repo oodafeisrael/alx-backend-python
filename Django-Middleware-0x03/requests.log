@@ -974,3 +974,6 @@ django.core.exceptions.ValidationError: ['“AnonymousUser” is not a valid UUI
 Not Found: /swagg
 /home/citrondev/prodev_be/alx-backend-python/Django-Middleware-0x03/chats/middleware.py changed, reloading.
 /home/citrondev/prodev_be/alx-backend-python/Django-Middleware-0x03/messaging_app/settings.py changed, reloading.
+/home/citrondev/prodev_be/alx-backend-python/Django-Middleware-0x03/manage.py changed, reloading.
+/home/citrondev/prodev_be/alx-backend-python/Django-Middleware-0x03/chats/middleware.py changed, reloading.
+/home/citrondev/prodev_be/alx-backend-python/Django-Middleware-0x03/messaging_app/settings.py changed, reloading.
