@@ -137,3 +137,35 @@ class OffensiveLanguageMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+
+class RolePermissionMiddleware:
+    """
+    Middleware to restrict access based on user role.
+    Only users with role 'admin' or 'moderator' are allowed to access protected views.
+    """
+
+    def __init__(self, get_response):
+        """
+        Initialize the middleware with the response handler.
+        """
+        self.get_response = get_response
+
+    def __call__(self, request):
+        """
+        Intercepts the request and checks the user's role.
+        If the role is not 'admin' or 'moderator', return 403 Forbidden.
+        """
+        user = getattr(request, 'user', None)
+
+        if user and user.is_authenticated:
+            # Assume the user model has a 'role' attribute
+            user_role = getattr(user, 'role', None)
+
+            if user_role not in ['admin', 'moderator']:
+                return JsonResponse(
+                    {'error': 'Access denied. Only admins or moderators are allowed.'},
+                    status=403
+                )
+
+        return self.get_response(request)
