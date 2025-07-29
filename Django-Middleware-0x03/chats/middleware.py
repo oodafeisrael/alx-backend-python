@@ -139,7 +139,7 @@ class OffensiveLanguageMiddleware:
         return ip
 
 
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     """
     Middleware to restrict access based on user role.
     Only users with role 'admin' or 'moderator' are allowed to access protected views.
