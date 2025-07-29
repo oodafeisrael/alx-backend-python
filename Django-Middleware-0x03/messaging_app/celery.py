@@ -3,10 +3,9 @@ import os
 from celery import Celery
 
 # Set the default Django settings module
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Django-Middleware-0x03.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'messaging_app.settings')
 
-# app = Celery('messaging_app')
-app = Celery('Django-Middleware-0x03')
+app = Celery('messaging_app')
 
 # Set RabbitMQ as broker
 app.conf.broker_url = 'amqp://guest:guest@localhost:5672//'
