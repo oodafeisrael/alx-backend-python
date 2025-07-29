@@ -1,59 +1,47 @@
-"""
-Middleware module for logging user requests to a log file.
-
-This middleware captures each incoming request, records the timestamp, 
-the user (or 'Anonymous' if not authenticated), and the requested path. 
-The data is logged into a file called `requests.log`.
-
-Example log entry:
-    2025-07-26 18:42:03.321243 - User: Anonymous - Path: /
-"""
-
 import logging
 from datetime import datetime
 
-# Set up logger for this middleware
-logger = logging.getLogger(__name__)
-handler = logging.FileHandler('requests.log')
-formatter = logging.Formatter('%(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
-
+# Configure the logger to write to 'requests.log' in the project root.
+logging.basicConfig(
+    filename='requests.log',
+    level=logging.INFO,
+    format='%(message)s'
+)
 
 class RequestLoggingMiddleware:
     """
-    Middleware class that logs details of every HTTP request made to the server.
+    Middleware that logs each incoming HTTP request with timestamp, user, and path.
 
-    Attributes:
-        get_response (callable): The next middleware or view in the Django request/response cycle.
+    This middleware writes to 'requests.log' in the format:
+    'YYYY-MM-DD HH:MM:SS.microseconds - User: <username/Anonymous> - Path: <URL path>'
     """
 
     def __init__(self, get_response):
         """
-        Initializes the middleware with the next layer in the stack.
+        Initialize the middleware with the next callable in the stack.
 
         Args:
-            get_response (callable): The next middleware or view.
+            get_response (callable): The next middleware or view to call.
         """
         self.get_response = get_response
 
     def __call__(self, request):
         """
-        Called on each request before the view (and later middleware) is called.
-
-        Logs the current timestamp, username (or 'Anonymous'), and the request path.
+        Handle the request, log the necessary information, then continue processing.
 
         Args:
             request (HttpRequest): The incoming HTTP request.
 
         Returns:
-            HttpResponse: The response from the view or next middleware.
+            HttpResponse: The response returned by the view or next middleware.
         """
-        user = request.user if request.user.is_authenticated else "Anonymous"
-        # Log request info
+        # Determine user identity
+        user = request.user if hasattr(request, "user") and request.user.is_authenticated else "Anonymous"
+
+        # Log the request information
         logging.info(f"{datetime.now()} - User: {user} - Path: {request.path}")
 
-        # Continue processing
+        # Continue processing the request
         response = self.get_response(request)
         return response
+
