@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Message, Notification
+from .models import Message, Notification, MessageHistory
 
 
 class MessagingSignalTestCase(TestCase):
@@ -38,3 +38,6 @@ class MessagingSignalTestCase(TestCase):
         notification = Notification.objects.first()
         self.assertEqual(notification.user, self.receiver)
         self.assertEqual(notification.message.content, 'Hello Bob!')
+
+
+
