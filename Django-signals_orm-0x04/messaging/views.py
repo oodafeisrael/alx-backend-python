@@ -83,6 +83,12 @@ def view_message(request, message_id):
         id=message_id
     )
 
+    if not message.read:
+        message.read = True
+        message.save(update_fields=['read'])
+
+    return render(request, 'messaging/view_message.html', {'message': message})
+
     def get_thread(message):
         """
         Recursively fetch all replies to a message.

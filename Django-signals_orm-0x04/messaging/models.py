@@ -1,5 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
+
+class UnreadMessagesManager(models.Manager):
+    """
+    Custom manager to retrieve unread messages for a specific user.
+    Optimized with `.only()` to fetch only essential fields.
+    """
+    def for_user(self, user):
+        return self.filter(recipient=user, read=False).only(
+            'id', 'sender', 'recipient', 'subject', 'sent_at'
+        )
 
 
 class Message(models.Model):
@@ -28,6 +43,12 @@ class Message(models.Model):
         related_name='replies',
         help_text="Reference to the parent message if this message is a reply."
     )
+    
+    """Field to track if message is read"""
+    read = models.BooleanField(default=False)
+
+    read = models.BooleanField(default=False)
+    unread = UnreadMessagesManager()
 
     def __str__(self):
         return f"From {self.sender.username} to {self.receiver.username}: {self.content[:20]}"
