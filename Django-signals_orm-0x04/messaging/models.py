@@ -12,7 +12,7 @@ class UnreadMessagesManager(models.Manager):
     Custom manager to retrieve unread messages for a specific user.
     Optimized with `.only()` to fetch only essential fields.
     """
-    def for_user(self, user):
+    def unread_for_user(self, user):
         return self.filter(recipient=user, read=False).only(
             'id', 'sender', 'recipient', 'subject', 'sent_at'
         )

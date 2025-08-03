@@ -130,7 +130,7 @@ def unread_messages_view(request):
     Display unread messages for the logged-in user.
     Only necessary fields are fetched using `.only()` for performance.
     """
-    unread_messages = Message.unread.for_user(request.user).only(
+    unread_messages = Message.unread.unread_for_user(request.user).only(
         'id', 'sender', 'content', 'timestamp'
     )
     return render(request, 'messaging/unread_messages.html', {
