@@ -123,3 +123,16 @@ def reply_message(request, message_id):
             return redirect('messaging:inbox')  # Or wherever you want to redirect
 
     return render(request, 'messaging/reply_message.html', {'parent': parent})
+
+@login_required
+def unread_messages_view(request):
+    """
+    Display unread messages for the logged-in user.
+    Only necessary fields are fetched using `.only()` for performance.
+    """
+    unread_messages = Message.unread.for_user(request.user).only(
+        'id', 'sender', 'content', 'timestamp'
+    )
+    return render(request, 'messaging/unread_messages.html', {
+        'unread_messages': unread_messages
+    })
