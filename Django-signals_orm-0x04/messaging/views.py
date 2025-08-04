@@ -1,3 +1,4 @@
+from django.views.decorators.cache import cache_page
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -20,6 +21,19 @@ def inbox(request):
 
     return render(request, 'messaging/inbox.html', {'messages': messages})
 
+
+@cache_page(60)  # Cache for 60 seconds
+def conversation_view(request, conversation_id):
+    """
+    Display messages in a conversation. Results cached for 60 seconds.
+    """
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    messages = Message.objects.filter(conversation=conversation).select_related('sender').order_by('sent_at')
+
+    return render(request, 'chats/conversation_detail.html', {
+        'conversation': conversation,
+        'messages': messages
+    })
 
 def get_threaded_replies(message):
     """Recursively fetch all replies to a message."""
