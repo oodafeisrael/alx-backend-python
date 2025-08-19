@@ -21,11 +21,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+# Detect which environment we’re in
+ENV = env("APP_ENV", default="local")
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
+
+if ENV == "docker":
+    DB_NAME = env("DOCKER_DB_NAME")
+    DB_USER = env("DOCKER_DB_USER")
+    DB_PASSWORD = env("DOCKER_DB_PASSWORD")
+    DB_HOST = env("DOCKER_DB_HOST")
+    DB_PORT = env("DOCKER_DB_PORT")
+else:  # default to local
+    DB_NAME = env("DB_NAME")
+    DB_USER = env("DB_USER")
+    DB_PASSWORD = env("DB_PASSWORD")
+    DB_HOST = env("DB_HOST")
+    DB_PORT = env("DB_PORT")
 
 
 # Quick-start development settings - unsuitable for production
